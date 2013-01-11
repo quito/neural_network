@@ -5,6 +5,8 @@
 # include <cstdlib>
 # include <cmath>
 # include <list>
+# include <vector>
+# include <iostream>
 
 class Neuron;
 
@@ -46,6 +48,17 @@ public:
     _OConnections.push_back(c);
   }
 
+  void			linkToLayer(std::vector<Neuron*> &Layer)
+  {
+    std::vector<Neuron*>::iterator	it;
+
+    for (it = Layer.begin(); it != Layer.end(); it++)
+      {
+	this->addConnection(*(*it));
+	std::cout << "add connection" << std::endl;
+      }
+  }
+
   // sigmoid threshold check
   int		threshold(float x)
   {
@@ -64,6 +77,7 @@ public:
     if (this->threshold(_sum + _biais) == 1)
       this->fire();
   }
+
 
   void		fire(void)
   {
