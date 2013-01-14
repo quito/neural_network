@@ -2,7 +2,10 @@
 NAME	=	neuronne
 
 SRC	=	main.cpp \
-		neuron.cpp
+		neuron.cpp \
+		network.cpp \
+		trainer.cpp \
+		imgtrainer.cpp
 
 CC	=	g++ -ggdb
 
