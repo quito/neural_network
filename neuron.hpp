@@ -42,7 +42,7 @@ public:
   void			addConnection(Neuron &neuron)
   {
     t_connection	*c;
-    float		t[] = {0, 1};
+    float		t[] = {-1, 1};
 
     c = new t_connection(neuron, t[rand() % (sizeof(t) / sizeof(*t))]);
     _OConnections.push_back(c);

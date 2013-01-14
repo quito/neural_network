@@ -50,7 +50,7 @@ public:
     _y(y)
   {
     std::vector<int>	hlayer(1);
-    hlayer[0] = 200;
+    hlayer[0] = 500;
 
     loadFilelist();
     std::random_shuffle(_fileList.begin(), _fileList.end());
@@ -98,6 +98,7 @@ public:
       std::vector<std::pair<std::string, int> >::iterator	end;
       unsigned char	*data;
       int		answer;
+      int		*outs;
 
       data = NULL;
       end = _fileList.end();
@@ -110,7 +111,8 @@ public:
 	    continue;
 	  _net->loadInput(data, _x * _y * 4);
 	  data = NULL;
-	  _net->guess();
+	  outs = _net->getOutputs();
+	  
 	}
       _imgLoader.deleteData();
     }

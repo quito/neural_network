@@ -16,7 +16,7 @@ private:
   std::vector<Neuron*>	_INeurons;
   std::vector<std::vector<Neuron*> >	_HNeurons;
   std::vector<Neuron*>	_ONeurons;
-  unsigned int		*_Outputs;
+  int		*_Outputs;
 
 public:
 
@@ -31,7 +31,7 @@ public:
     int				i = 0;
 
     _Inputs = new unsigned int[NbIn];
-    _Outputs = new unsigned int[NbOut];
+    _Outputs = new int[NbOut];
     for (it = NBHidden.begin(); it != NBHidden.end(); it++)
       {
 	_HNeurons[i].resize(*it);
@@ -131,7 +131,7 @@ public:
     memcpy(_Inputs, data, size * sizeof(*data));
   }
 
-  int			guess(unsigned char *data = NULL, unsigned int size = 0)
+  int			*getOutputs(unsigned char *data = NULL, unsigned int size = 0)
   {
     std::vector<Neuron*>::iterator	it;
     std::vector<Neuron*>::iterator	end;
@@ -165,7 +165,39 @@ public:
 	std::cout << "Output[" << i << "] = " << _Outputs[i] << std::endl;
 	i++;
       }
-    return 0;
+    return _Outputs;
+  }
+
+  int			guess()
+  {
+    int			*outs;
+    unsigned int	i;
+
+    outs = this->getOutputs();
+    i = 0;
+    while (i < _ONeurons.size())
+      {
+	if (outs[i] != 0)
+	  return outs[i];
+	i++;
+      }
+    return -1;
+  }
+
+  void			adjustWeight(int *output, int *answer)
+  {
+    float		delta;
+    unsigned int	i = 0;
+    float		sig;
+    float		learning_ratio = 1.f;
+    
+    while (i < _ONeurons.size())
+      {
+	sig = ((float)answer[i] - (float)output[i]) * (float)output[i] * (1.f - output[i]);
+	delta = learning_ratio * sig * (float)output[i];
+	(void)delta;
+	i++;
+      }
   }
 };
 
