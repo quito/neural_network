@@ -50,7 +50,7 @@ public:
     _y(y)
   {
     std::vector<int>	hlayer(1);
-    hlayer[0] = 10;
+    hlayer[0] = 200;
 
     loadFilelist();
     std::random_shuffle(_fileList.begin(), _fileList.end());
