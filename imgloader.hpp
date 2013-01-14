@@ -2,18 +2,20 @@
 #ifndef IMGLOADER_HPP_
 # define IMGLOADER_HPP_
 
+#include <exception>
 # include <iostream>
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
 
+# pragma pack(2)
+
 typedef struct
 {
   unsigned short	magic;
   unsigned int		bmp_size;
-  unsigned short	id_app1;
-  unsigned short	id_app2;
-  char			*start_offset;
+  unsigned int		id_app;
+  unsigned int		start_offset;
 }		t_bmp_header;
 
 typedef struct
@@ -31,23 +33,27 @@ typedef struct
   unsigned int		important_color;
 }		t_bmp_img_header;
 
+#pragma pack()
+
 class ImgLoader
 {
 private:
 
   unsigned char		*_data;
+  unsigned int		_allocated_size;
 
 public:
 
   ImgLoader() :
-    _data(NULL)
+    _data(NULL),
+    _allocated_size(0)
   {
   }
 
   ~ImgLoader()
   {
     if (_data)
-      delete _data;
+      delete[] _data;
   }
 
   unsigned char		*getBmpData(const std::string &path)
@@ -55,41 +61,70 @@ public:
     int			fd;
     t_bmp_header	header;
     t_bmp_img_header	img_header;
-    unsigned char	*data;
 
+    // std::cout << sizeof(header) << std::endl;
+    // std::cout << sizeof(img_header) << std::endl;
+    // if (_data)
+    //   {
+    // 	delete[] _data;
+    // 	_data = NULL;
+    //   }
     if ((fd = open(path.c_str(), O_RDONLY)) == -1)
       {
 	std::cerr << "Cannot open file " << path << std::endl;
+	close(fd);
 	return NULL;
       }
-    if (_data)
-      delete _data;
-    _data = NULL;
     if ((read(fd, &header, sizeof(header))) < 1)
       {
 	std::cerr << "Cannot read file " << path << std::endl;
+	close(fd);
 	return NULL;
       }
     if ((read(fd, &img_header, sizeof(img_header))) < 1)
       {
 	std::cerr << "Cannot read file " << path << std::endl;
+	close(fd);
 	return NULL;
       }
     unsigned int size = img_header.width * img_header.height * (img_header.bpp / 8);
-    data = new unsigned char[size];
-    if ((read(fd, data, size)) < 1)
+    try
+      {
+	if (_allocated_size != size)
+	  {
+	    delete[] _data;
+	    _data = NULL;
+	  }
+	if (!_data)
+	  {
+	    std::cout << "allocation de " << size << std::endl;
+	    _data = new unsigned char[size];
+	  }
+      }
+    catch (std::exception& e)
+      {
+	std::cerr << "Error : " <<  e.what() << std::endl;
+	close(fd);
+	return NULL;
+      }
+    _allocated_size = size;
+    std::cout << "done " << std::endl;
+    // std::cout << "offset " << header.start_offset << " bmp size "<< header.bmp_size << std::endl;
+    // std::cout << "inage header size " << img_header.img_header_size << "width " << img_header.width << " height " << img_header.height << "size " << size << " bpp " << img_header.bpp<< std::endl;
+    if ((read(fd, _data, size)) < 1)
       {
 	std::cerr << "Cannot read file data " << path << std::endl;
+	close(fd);
 	return NULL;
       }
     close(fd);
-    return data;
+    return _data;
   }
 
   void		deleteData(void)
   {
     if (_data)
-      delete _data;
+      delete[] _data;
     _data = NULL;
   }
 };

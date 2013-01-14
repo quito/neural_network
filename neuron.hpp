@@ -66,6 +66,7 @@ public:
     float	k = 1.f;
     float	result = 1.f / (1.f + exp(-k + x));
 
+    // std::cout << "result " << result << std::endl;
     if (result > thresholdValue)
       return 1;
     return 0;
@@ -74,10 +75,20 @@ public:
   void		addSignal(float signal)
   {
     _sum += signal;
+  }
+
+  int		getOutput(void)
+  {
+    if (this->threshold(_sum + _biais) == 1)
+      return 1;
+    return 0;
+  }
+
+  void		proceed(void)
+  {
     if (this->threshold(_sum + _biais) == 1)
       this->fire();
   }
-
 
   void		fire(void)
   {

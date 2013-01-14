@@ -16,6 +16,7 @@ private:
   std::vector<Neuron*>	_INeurons;
   std::vector<std::vector<Neuron*> >	_HNeurons;
   std::vector<Neuron*>	_ONeurons;
+  unsigned int		*_Outputs;
 
 public:
 
@@ -30,6 +31,7 @@ public:
     int				i = 0;
 
     _Inputs = new unsigned int[NbIn];
+    _Outputs = new unsigned int[NbOut];
     for (it = NBHidden.begin(); it != NBHidden.end(); it++)
       {
 	_HNeurons[i].resize(*it);
@@ -127,6 +129,43 @@ public:
   void			loadInput(unsigned char *data, unsigned int size)
   {
     memcpy(_Inputs, data, size * sizeof(*data));
+  }
+
+  int			guess(unsigned char *data = NULL, unsigned int size = 0)
+  {
+    std::vector<Neuron*>::iterator	it;
+    std::vector<Neuron*>::iterator	end;
+    unsigned int			i = 0;
+
+    end = _INeurons.end();
+    if (data)
+      this->loadInput(data, size);
+    for (it = _INeurons.begin() ; it != end; it++)
+      {
+	(*it)->addSignal(_Inputs[i]);
+	(*it)->proceed();
+	i++;
+      }
+
+    std::vector<std::vector<Neuron*> >::iterator	ith;
+    std::vector<std::vector<Neuron*> >::iterator	endh;
+    endh = _HNeurons.end();
+    for (ith = _HNeurons.begin(); ith != endh; ith++)
+      {
+	end = (*ith).end();
+	for (it = (*ith).begin(); it != end; it++)
+	  (*it)->proceed();
+      }
+
+    end = _ONeurons.end();
+    i = 0;
+    for (it = _ONeurons.begin() ; it != end; it++)
+      {
+	_Outputs[i] = (*it)->getOutput();
+	std::cout << "Output[" << i << "] = " << _Outputs[i] << std::endl;
+	i++;
+      }
+    return 0;
   }
 };
 

@@ -97,15 +97,22 @@ public:
       std::vector<std::pair<std::string, int> >::iterator	it;
       std::vector<std::pair<std::string, int> >::iterator	end;
       unsigned char	*data;
+      int		answer;
 
+      data = NULL;
       end = _fileList.end();
       if (!_net)
 	return ;
       for (it = _fileList.begin() ; it != end ; it++)
 	{
-	  data = _imgLoader.getBmpData((*it).first);
+	  answer = (*it).second;
+	  if (!(data = _imgLoader.getBmpData((*it).first)))
+	    continue;
 	  _net->loadInput(data, _x * _y * 4);
+	  data = NULL;
+	  _net->guess();
 	}
+      _imgLoader.deleteData();
     }
 };
 

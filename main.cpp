@@ -12,5 +12,6 @@ int		main()
   Network	*n = NULL;
 
   n = trainer.getNetwork();
+  trainer.train();
   return 0;
 }
