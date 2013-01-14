@@ -5,10 +5,12 @@
 
 int		main()
 {
-  std::vector<int>	hlayer(1);
-  hlayer[0] = 10;
-  Network	n(5, 2, hlayer);
-  ImgTrainer	trainer(n, "./numbers/");
-  
+  // Network	n(1764 * 1200, 2, hlayer);
+  std::cout << "[+] Creating Neural Network" << std::endl;
+  ImgTrainer	trainer("./numbers/", 1200, 1764);
+  std::cout << "[+] Done" << std::endl;
+  Network	*n = NULL;
+
+  n = trainer.getNetwork();
   return 0;
 }

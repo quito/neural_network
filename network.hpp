@@ -5,12 +5,14 @@
 # include <vector>
 # include <time.h>
 # include <iostream>
+# include <cstring>
 # include "neuron.hpp"
 
 class	Network
 {
 private:
 
+  unsigned int		*_Inputs;
   std::vector<Neuron*>	_INeurons;
   std::vector<std::vector<Neuron*> >	_HNeurons;
   std::vector<Neuron*>	_ONeurons;
@@ -27,6 +29,7 @@ public:
     std::vector<int>::iterator	it;
     int				i = 0;
 
+    _Inputs = new unsigned int[NbIn];
     for (it = NBHidden.begin(); it != NBHidden.end(); it++)
       {
 	_HNeurons[i].resize(*it);
@@ -85,7 +88,7 @@ public:
       for (it = _INeurons.begin() ; it != end; it++)
 	{
 	  (*it)->linkToLayer(*out);
-	  std::cout << "linked" << std::endl;
+	  // std::cout << "linked" << std::endl;
 	}
 
     std::vector<std::vector<Neuron*> >::iterator	ith;
@@ -104,7 +107,7 @@ public:
 	    for (; it != end; it++)
 	      {
 		(*it)->linkToLayer(_HNeurons[i]);
-		std::cout << "linked" << std::endl;
+		// std::cout << "linked" << std::endl;
 	      }
 	  }
 	else
@@ -114,11 +117,16 @@ public:
 	    for (; it != end; it++)
 	      {
 		(*it)->linkToLayer(_ONeurons);
-		std::cout << "linked" << std::endl;
+		// std::cout << "linked" << std::endl;
 	      }
 	  }
 	
       }
+  }
+
+  void			loadInput(unsigned char *data, unsigned int size)
+  {
+    memcpy(_Inputs, data, size * sizeof(*data));
   }
 };
 

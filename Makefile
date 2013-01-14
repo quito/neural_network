@@ -5,13 +5,14 @@ SRC	=	main.cpp \
 		neuron.cpp \
 		network.cpp \
 		trainer.cpp \
-		imgtrainer.cpp
+		imgtrainer.cpp \
+		imgloader.cpp
 
-CC	=	g++ -ggdb
+CC	=	g++
 
 OBJ	=	$(SRC:.cpp=.o)
 
-CFLAGS =	-Wall -Wextra -ffast-math
+CFLAGS =	-Wall -Wextra -ffast-math -O3
 
 LDFLAGS =	-lSDL -lm
 

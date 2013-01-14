@@ -55,7 +55,7 @@ public:
     for (it = Layer.begin(); it != Layer.end(); it++)
       {
 	this->addConnection(*(*it));
-	std::cout << "add connection" << std::endl;
+	// std::cout << "add connection" << std::endl;
       }
   }
 
