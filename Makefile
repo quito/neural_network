@@ -8,11 +8,11 @@ SRC	=	main.cpp \
 		imgtrainer.cpp \
 		imgloader.cpp
 
-CC	=	g++
+CC	=	clang++
 
 OBJ	=	$(SRC:.cpp=.o)
 
-CFLAGS =	-Wall -Wextra -ffast-math -O3
+CFLAGS =	-Wall -Wextra -ffast-math -ggdb
 
 LDFLAGS =	-lSDL -lm
 

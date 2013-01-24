@@ -112,7 +112,6 @@ public:
 	  _net->loadInput(data, _x * _y * 4);
 	  data = NULL;
 	  outs = _net->getOutputs();
-	  
 	}
       _imgLoader.deleteData();
     }
