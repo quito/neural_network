@@ -208,7 +208,7 @@ void			Network::adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
       sigma = ((float)answers[i] - (*it)->neuron.getLastOut()) * (*it)->neuron.getLastOut() * (1.f - (*it)->neuron.getLastOut());
       delta = learning_ratio * sigma * neuron.getLastOut();
       // if (delta != 0.f)
-      // std::cout << "delta = " << delta<< std::endl;
+      std::cout << "delta = " << delta<< std::endl;
       ++i;
     }
 }

@@ -103,7 +103,7 @@ public:
   {
     double	out = this->threshold(_sum + _biais);
     _lastOut = out;
-    std::cout << "OUT:   " << out << std::endl;
+    // std::cout << "OUT:   " << out << std::endl;
     return out;
   }
 
