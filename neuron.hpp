@@ -80,10 +80,12 @@ public:
     // double	result = 1.f / (1.f + (double)expf(-k + x));
     // double	result = 1.f / (1.f);
     double	result = 1.f / (1.f + exp(-x));
-    if (result != 0)
-      std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
+    // if (result != 0)
+    //   std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
 
-    return result;
+    if (result > 0.5)
+      return 1.f;
+    return 0;
     // if (result > thresholdValue)
     //   return 1;
     // return 0;

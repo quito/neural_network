@@ -193,28 +193,30 @@ void			Network::adjustWeight(int *output, int *answer)
 }
 //FIXME
 void			Network::adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
-							   double answer)
+							   int *answers)
 {
   std::list<t_connection *>::iterator	it;
   std::list<t_connection *>::iterator	end;
   std::list<t_connection *>		&connections = neuron.getConnections();
   double					delta;
   double					sigma;
+  int					i = 0;
 
   end = connections.end();
   for (it = connections.begin(); it != end; ++it)
     {
-      sigma = (answer - (*it)->neuron.getLastOut()) * (*it)->neuron.getLastOut() * (1.f - (*it)->neuron.getLastOut());
+      sigma = ((float)answers[i] - (*it)->neuron.getLastOut()) * (*it)->neuron.getLastOut() * (1.f - (*it)->neuron.getLastOut());
       delta = learning_ratio * sigma * neuron.getLastOut();
       // if (delta != 0.f)
       // std::cout << "delta = " << delta<< std::endl;
+      ++i;
     }
 }
 
 //FIXME
 void			Network::adjustOutLayerWeights(double learning_ratio,
 						       std::vector<Neuron *> &layer,
-						       int *outputs, int *answer)
+						       int *outputs, int *answers)
 {
   std::vector<Neuron*>::iterator	it;
   std::vector<Neuron*>::iterator	end;
@@ -223,7 +225,7 @@ void			Network::adjustOutLayerWeights(double learning_ratio,
   end = layer.end();
   for (it = layer.begin(); it != end; ++it)
     {
-      this->adjustOutConnectionWeight(learning_ratio, *(*it), answer[i]);
+      this->adjustOutConnectionWeight(learning_ratio, *(*it), answers);
       ++i;
     }
 }

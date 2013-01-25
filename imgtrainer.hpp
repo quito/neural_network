@@ -50,7 +50,8 @@ public:
     _y(y)
   {
     std::vector<int>	hlayer(1);
-    hlayer[0] = 500;
+    // hlayer[0] = ((_x * _y) - (sizeof(folder_tab) / sizeof(*folder_tab))) / 2 ;
+    hlayer[0] = 30;
 
     loadFilelist();
     std::random_shuffle(_fileList.begin(), _fileList.end());

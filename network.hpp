@@ -30,7 +30,7 @@ public:
   int			guess();
   inline double		getOutSigma(int output, int answer);
   void			adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
-						  double answer);
+						  int *answers);
   void			adjustWeight(int *output, int *answer);
   void			adjustOutLayerWeights(double learning_ratio, std::vector<Neuron *> &layer,
 					      int *output, int *answer);
