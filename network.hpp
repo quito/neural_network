@@ -22,16 +22,18 @@ public:
 
   Network(unsigned int NbIn, unsigned int NbOut, std::vector<int> &NBHidden);
 
+  inline unsigned	getOutLayerSize(void) const {return _ONeurons.size();}
   void			allocateNeurons(void);
   void			linkNeurons(void);
   void			loadInput(unsigned char *data, unsigned int size);
   int			*getOutputs(unsigned char *data = NULL, unsigned int size = 0);
   int			guess();
-  inline float		getOutSigma(int output, int answer);
-  inline float		getMidSigma(int output, int answer);
+  inline double		getOutSigma(int output, int answer);
+  void			adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
+						  double answer);
   void			adjustWeight(int *output, int *answer);
-  void			adjustLayerWeights(float learning_ratio, std::vector<Neuron *> &layer);
-  void			adjustOutLayerWeights(float learning_ratio, std::vector<Neuron *> &layer);
+  void			adjustOutLayerWeights(double learning_ratio, std::vector<Neuron *> &layer,
+					      int *output, int *answer);
   void			adjustWeights(int *output, int *answer);
 };
 

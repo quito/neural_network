@@ -13,9 +13,9 @@ class Neuron;
 typedef struct	s_connection
 {
   Neuron	&neuron;
-  float		connnectionWeight;
+  double		connnectionWeight;
 
-  s_connection(Neuron &n, float w):
+  s_connection(Neuron &n, double w):
     neuron(n),
     connnectionWeight(w)
   {}
@@ -26,26 +26,38 @@ class	Neuron
 protected:
 
   std::list<t_connection*>		_OConnections;
-  float					_outputSignal;
-  float					_sum;
-  float					_biais;
+  double					_outputSignal;
+  double					_sum;
+  double					_biais;
+  double					_lastOut;
 
 public:
 
   Neuron() :
     _outputSignal(1.0f),
     _sum(0),
-    _biais(1.f)
+    _biais(1.f),
+    _lastOut(0)
   {
+  }
+
+  inline std::list<t_connection*>	&getConnections(void)
+  {
+    return _OConnections;
+  }
+  inline double				getLastOut(void)
+  {
+    return _lastOut;
   }
 
   void			addConnection(Neuron &neuron)
   {
     t_connection	*c;
-    // float		t[] = {-1, 1};
+    // double		t[] = {-1, 1};
 
     // c = new t_connection(neuron, t[rand() % (sizeof(t) / sizeof(*t))]);
-    c = new t_connection(neuron, (float)(rand() % 100) / 100.f - 0.5);
+    c = new t_connection(neuron, (double)(rand() % 100) / 100.f - 0.5);
+    // std::cout << "connection weight : " << c->connnectionWeight<< std::endl;
     _OConnections.push_back(c);
   }
 
@@ -61,34 +73,42 @@ public:
   }
 
   // sigmoid threshold check
-  int		threshold(float x)
+  double		threshold(double x)
   {
-    float	thresholdValue = 1.f;
-    float	k = 1.f;
-    float	result = 1.f / (1.f + exp(-k + x));
+    // double	thresholdValue = 1.f;
+    // double	k = 1.f;
+    // double	result = 1.f / (1.f + (double)expf(-k + x));
+    // double	result = 1.f / (1.f);
+    double	result = 1.f / (1.f + exp(-x));
+    if (result != 0)
+      std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
 
-    // std::cout << "result " << result << std::endl;
-    if (result > thresholdValue)
-      return 1;
-    return 0;
+    return result;
+    // if (result > thresholdValue)
+    //   return 1;
+    // return 0;
   }
 
-  void		addSignal(float signal)
+  void		addSignal(double signal)
   {
     _sum += signal;
+    // if (_sum != 0)
+    //   std::cout << "sum_value = " << _sum << std::endl;
   }
 
-  int		getOutput(void)
+  //FIXME
+  double		getOutput(void)
   {
-    if (this->threshold(_sum + _biais) == 1)
-      return 1;
-    return 0;
+    double	out = this->threshold(_sum + _biais);
+    _lastOut = out;
+    std::cout << "OUT:   " << out << std::endl;
+    return out;
   }
 
   void		proceed(void)
   {
-    if (this->threshold(_sum + _biais) == 1)
-      this->fire();
+    // if (this->threshold(_sum + _biais) == 1)
+    this->fire();
   }
 
   void		fire(void)
@@ -96,9 +116,12 @@ public:
     std::list<t_connection*>::iterator	it;
     std::list<t_connection*>::iterator	end;
 
+    _lastOut = this->threshold(_sum);
+    end = _OConnections.end();
     for (it = _OConnections.begin(); it != end; it++)
       if (*it)
-	(*it)->neuron.addSignal(_outputSignal * (*it)->connnectionWeight);
+	(*it)->neuron.addSignal(this->threshold(_sum) * (*it)->connnectionWeight);
+	// (*it)->neuron.addSignal(_outputSignal * (*it)->connnectionWeight);
     _sum = 0;
   }
 };

@@ -79,7 +79,7 @@ public:
 	    if (directory->d_name[0] == '.')
 	      continue;
 	    _fileList.push_back(make_pair(path + "/" + directory->d_name,
-					  folder_tab[i].solution));
+				  folder_tab[i].solution));
 	    // std::cout << path + "/" + directory->d_name << std::endl;
 	  }
 	closedir(dir);
@@ -92,12 +92,26 @@ public:
       return _net;
     }
 
+  int			*buildAnswerTab(int answer)
+  {
+    unsigned		size = _net->getOutLayerSize();
+    unsigned 		i;
+    int			*answerTab = new int[size];
+    
+    for (i = 0; i < size; ++i)
+	answerTab[i] = 0;
+    if (answer < (signed int)size)
+      answerTab[answer] = 1;
+    return answerTab;
+  }
+
     void		train(void)
     {
       std::vector<std::pair<std::string, int> >::iterator	it;
       std::vector<std::pair<std::string, int> >::iterator	end;
       unsigned char	*data;
       int		answer;
+      int		*answerTab;
       int		*outs;
 
       data = NULL;
@@ -107,11 +121,14 @@ public:
       for (it = _fileList.begin() ; it != end ; it++)
 	{
 	  answer = (*it).second;
+	  answerTab = this->buildAnswerTab(answer);
 	  if (!(data = _imgLoader.getBmpData((*it).first)))
 	    continue;
 	  _net->loadInput(data, _x * _y * 4);
 	  data = NULL;
-	  outs = _net->getOutputs();
+	  
+	  outs = _net->getOutputs(); //guess
+	  _net->adjustWeights(outs, answerTab);
 	}
       _imgLoader.deleteData();
     }

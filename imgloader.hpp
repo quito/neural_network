@@ -108,7 +108,7 @@ public:
 	return NULL;
       }
     _allocated_size = size;
-    std::cout << "done " << std::endl;
+    // std::cout << "done " << std::endl;
     // std::cout << "offset " << header.start_offset << " bmp size "<< header.bmp_size << std::endl;
     // std::cout << "inage header size " << img_header.img_header_size << "width " << img_header.width << " height " << img_header.height << "size " << size << " bpp " << img_header.bpp<< std::endl;
     if ((read(fd, _data, size)) < 1)
