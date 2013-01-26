@@ -8,6 +8,9 @@
 # include <vector>
 # include <iostream>
 
+# include "graphic.hpp"
+# include "drawable.hpp"
+
 class Neuron;
 
 typedef struct	s_connection
@@ -21,7 +24,7 @@ typedef struct	s_connection
   {}
 }		t_connection;
 
-class	Neuron
+class	Neuron : public Drawable
 {
 protected:
 
@@ -40,8 +43,74 @@ public:
     _biais(1.f),
     _lastOut(0),
     _lastSigma(0)
+
   {
+    _posX = 50;
+    _posY = 50;
+    _color.color = 0x00FF00;
   }
+
+  // Draw
+  unsigned				getPosX(void) const {return _posX;}
+  unsigned				getPosY(void) const {return _posY;}
+  void					setPos(unsigned x, unsigned y)
+  {
+    _posX = x;
+    _posY = y;
+  }
+  void					setColor(unsigned color)
+  {
+    _color.color = color;
+  }
+  void					modifyColorFromSum(void)
+  {
+    _color.color = 0x0;
+    if (_sum < 0)
+      _color.tab[1] = 0xFF * (_sum * -1);
+    else
+      _color.tab[2] = 0xFF * (_sum);
+  }
+  unsigned			getColorFromConnection(t_connection *c)
+  {
+    u_color			color;
+
+    color.color = 0;
+    if (c->connnectionWeight < 0)
+      color.tab[1] = 0xFF * (c->connnectionWeight * -1);
+    else
+      color.tab[2] = 0xFF * (c->connnectionWeight);
+    return color.color;
+  }
+
+  void					drawConnections(void)
+  {
+    std::list<t_connection *>::iterator	it;
+    std::list<t_connection *>::iterator	end;
+
+    end = _OConnections.end();
+    for (it = _OConnections.begin(); it != end; ++it)
+      {
+	g.drawLine(_posX, _posY, (*it)->neuron.getPosX(), (*it)->neuron.getPosY(),
+		   this->getColorFromConnection(*it));
+      }
+  }
+
+  virtual void				draw(void)
+  {
+    // g.PutPixel(_posX, _posY, _color.color);
+    // g.PutPixel(_posX-1, _posY, _color.color);
+    // g.PutPixel(_posX-2, _posY, _color.color);
+    // g.PutPixel(_posX+1, _posY, _color.color);
+    // g.PutPixel(_posX+2, _posY, _color.color);
+    // g.PutPixel(_posX, _posY+1, _color.color);
+    // g.PutPixel(_posX, _posY+2, _color.color);
+    // g.PutPixel(_posX, _posY-1, _color.color);
+    // g.PutPixel(_posX, _posY-2, _color.color);
+    modifyColorFromSum();
+    g.drawSquare(_posX, _posY, _color.color, NEURON_SIZE);
+  }
+  //=========
+
 
   inline std::list<t_connection*>	&getConnections(void)
   {
@@ -98,8 +167,8 @@ public:
     // double	result = 1.f / (1.f + (double)expf(-k + x));
     // double	result = 1.f / (1.f);
     double	result = 1.f / (1.f + exp(-x));
-    if (result != 0 && x != 1)
-      std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
+    // if (result != 0 && x != 1)
+    //   std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
     if (result > 0.5)
       return 1.f;
     return 0;
@@ -111,6 +180,7 @@ public:
   void		addSignal(double signal)
   {
     _sum += signal;
+    this->draw();
     // if (_sum != 0)
     //   std::cout << "sum_value = " << _sum << std::endl;
   }

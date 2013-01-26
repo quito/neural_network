@@ -134,7 +134,9 @@ public:
 	    std::cout << "reponse : " << answer << std::endl;
 	  outs = _net->getOutputs(); //guess
 	  _net->adjustWeights(answerTab);
+ 	  g.update();
 	  ++i;
+	  usleep(100000);
 	}
       _imgLoader.deleteData();
     }

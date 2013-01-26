@@ -28,21 +28,17 @@ void		Network::allocateNeurons(void)
 {
   int		i = 0;
   int		s = _INeurons.size();
+  int		y = 0;
   std::vector<std::vector<Neuron*> >::iterator it;
   
   std::cout << "[+] Allocate neurons" << std::endl;
   while (i < s)
     {
       _INeurons[i] = new Neuron;
+      _INeurons[i]->setPos(NEURON_X_START_POS, (NEURON_SIZE + SPACE_BETWEEN_NEURON) * i + NEURON_Y_START_POS);
       i++;
     }
-  i = 0;
-  s = _ONeurons.size();
-  while (i < s)
-    {
-      _ONeurons[i] =  new Neuron;
-      i++;
-    }
+  ++y;
   for (it = _HNeurons.begin(); it != _HNeurons.end(); it++)
     {
       s = (*it).size();
@@ -50,8 +46,18 @@ void		Network::allocateNeurons(void)
       while (i < s)
 	{
 	  (*it)[i] = new Neuron;
+	  (*it)[i]->setPos(NEURON_X_START_POS + y * 300, (NEURON_SIZE + SPACE_BETWEEN_NEURON + 30) * i + NEURON_Y_START_POS + 120);
 	  i++;
 	}
+      ++y;
+    }
+  i = 0;
+  s = _ONeurons.size();
+  while (i < s)
+    {
+      _ONeurons[i] =  new Neuron;
+      _ONeurons[i]->setPos(NEURON_X_START_POS + y * 300, (NEURON_SIZE + SPACE_BETWEEN_NEURON + 40) * i + NEURON_Y_START_POS + 150);
+      i++;
     }
 }
 
@@ -218,9 +224,10 @@ void			Network::adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
       
       // if (delta != 0.f)
 	// std::cout << "delta = " << delta<< std::endl;
-      std::cout << "last out : " << (*it)->neuron.getLastOut() << std::endl;
+      // std::cout << "last out : " << (*it)->neuron.getLastOut() << std::endl;
       ++i;
     }
+  neuron.drawConnections();
 }
 
 //FIXME
@@ -272,7 +279,8 @@ void			Network::adjustLayerConnectionWeight(double learning_ratio, Neuron &neuro
 	// std::cout << "delta = " << delta<< std::endl;
       // std::cout << "last out : " << (*it)->neuron.getLastOut() << std::endl;
       ++i;
-    }  
+    }
+  neuron.drawConnections();
 }
 
 void			Network::adjustLayerWeights(double learning_ratio,

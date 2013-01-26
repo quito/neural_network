@@ -6,13 +6,14 @@ SRC	=	main.cpp \
 		network.cpp \
 		trainer.cpp \
 		imgtrainer.cpp \
-		imgloader.cpp
+		imgloader.cpp \
+		graphic.cpp
 
 CC	=	clang++
 
 OBJ	=	$(SRC:.cpp=.o)
 
-CFLAGS =	-Wall -Wextra -O3
+CFLAGS =	-Wall -Wextra -ggdb
 
 LDFLAGS =	-lSDL -lm
 

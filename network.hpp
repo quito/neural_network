@@ -41,6 +41,29 @@ public:
   void			adjustOutLayerWeights(double learning_ratio, std::vector<Neuron *> &layer,
 					      int *answer);
   void			adjustWeights(int *answer);
+
+
+  void			drawLayer(std::vector<Neuron*> layer)
+  {
+    std::vector<Neuron*>::iterator it;
+    std::vector<Neuron*>::iterator end;
+
+    end = layer.end();
+    for (it = layer.begin(); it != end; ++it)
+      (*it)->draw();
+  }
+
+  void			draw(void)
+  {
+    std::vector<std::vector<Neuron*> >::iterator	it;
+    std::vector<std::vector<Neuron*> >::iterator	end;
+
+    end = _HNeurons.end();
+    this->drawLayer(_INeurons);
+    for (it = _HNeurons.begin(); it != end; ++it)
+      this->drawLayer(*it);
+    this->drawLayer(_ONeurons);
+  }
 };
 
 #endif

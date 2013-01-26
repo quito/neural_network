@@ -2,6 +2,10 @@
 #include "neuron.hpp"
 #include "network.hpp"
 #include "imgtrainer.hpp"
+#include "graphic.hpp"
+
+Graphic	g(800, 800);
+
 
 int		main()
 {
@@ -13,5 +17,6 @@ int		main()
 
   n = trainer.getNetwork();
   trainer.train();
+  while (1);
   return 0;
 }
