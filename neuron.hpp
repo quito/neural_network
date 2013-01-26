@@ -30,6 +30,7 @@ protected:
   double					_sum;
   double					_biais;
   double					_lastOut;
+  double					_lastSigma;
 
 public:
 
@@ -37,7 +38,8 @@ public:
     _outputSignal(1.0f),
     _sum(0),
     _biais(1.f),
-    _lastOut(0)
+    _lastOut(0),
+    _lastSigma(0)
   {
   }
 
@@ -48,6 +50,16 @@ public:
   inline double				getLastOut(void)
   {
     return _lastOut;
+  }
+
+  inline void		setLastSigma(double s)
+  {
+    _lastSigma = s;
+  }
+  
+  inline double		getLastSigma(void) const
+  {
+    return _lastSigma;
   }
 
   void			addConnection(Neuron &neuron)
@@ -72,6 +84,12 @@ public:
       }
   }
 
+
+  double		getSigmoidResult(double x)
+  {
+    return 1.f / (1.f + exp(-(x)));
+  }
+
   // sigmoid threshold check
   double		threshold(double x)
   {
@@ -80,9 +98,8 @@ public:
     // double	result = 1.f / (1.f + (double)expf(-k + x));
     // double	result = 1.f / (1.f);
     double	result = 1.f / (1.f + exp(-x));
-    // if (result != 0)
-    //   std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
-
+    if (result != 0 && x != 1)
+      std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
     if (result > 0.5)
       return 1.f;
     return 0;
@@ -102,15 +119,15 @@ public:
   double		getOutput(void)
   {
     double	out = this->threshold(_sum + _biais);
-    _lastOut = out;
+    _lastOut = this->getSigmoidResult(_sum + _biais);
     // std::cout << "OUT:   " << out << std::endl;
     return out;
   }
 
   void		proceed(void)
   {
-    // if (this->threshold(_sum + _biais) == 1)
-    this->fire();
+    // if (this->threshold(_sum + _biais) > 0.5)
+      this->fire();
   }
 
   void		fire(void)
@@ -118,11 +135,12 @@ public:
     std::list<t_connection*>::iterator	it;
     std::list<t_connection*>::iterator	end;
 
-    _lastOut = this->threshold(_sum);
+    // _lastOut = this->threshold(_sum);
+    _lastOut = this->getSigmoidResult(_sum + _biais);
     end = _OConnections.end();
     for (it = _OConnections.begin(); it != end; it++)
       if (*it)
-	(*it)->neuron.addSignal(this->threshold(_sum) * (*it)->connnectionWeight);
+	(*it)->neuron.addSignal(this->threshold(_sum + _biais) * (*it)->connnectionWeight);
 	// (*it)->neuron.addSignal(_outputSignal * (*it)->connnectionWeight);
     _sum = 0;
   }

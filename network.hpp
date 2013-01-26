@@ -28,13 +28,19 @@ public:
   void			loadInput(unsigned char *data, unsigned int size);
   int			*getOutputs(unsigned char *data = NULL, unsigned int size = 0);
   int			guess();
+
+  double		getSigmaSum(Neuron &neuron);
+  void			adjustLayerConnectionWeight(double learning_ratio, Neuron &neuron);
+  void			adjustLayerWeights(double learning_ratio,
+					   std::vector<Neuron *> &layer);
+
   inline double		getOutSigma(int output, int answer);
   void			adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
 						  int *answers);
   void			adjustWeight(int *output, int *answer);
   void			adjustOutLayerWeights(double learning_ratio, std::vector<Neuron *> &layer,
-					      int *output, int *answer);
-  void			adjustWeights(int *output, int *answer);
+					      int *answer);
+  void			adjustWeights(int *answer);
 };
 
 #endif

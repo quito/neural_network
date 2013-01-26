@@ -51,7 +51,7 @@ public:
   {
     std::vector<int>	hlayer(1);
     // hlayer[0] = ((_x * _y) - (sizeof(folder_tab) / sizeof(*folder_tab))) / 2 ;
-    hlayer[0] = 30;
+    hlayer[0] = 15;
 
     loadFilelist();
     std::random_shuffle(_fileList.begin(), _fileList.end());
@@ -115,10 +115,13 @@ public:
       int		*answerTab;
       int		*outs;
 
+      unsigned int i = 0;
+
       data = NULL;
       end = _fileList.end();
       if (!_net)
 	return ;
+      while (1)
       for (it = _fileList.begin() ; it != end ; it++)
 	{
 	  answer = (*it).second;
@@ -127,9 +130,11 @@ public:
 	    continue;
 	  _net->loadInput(data, _x * _y * 4);
 	  data = NULL;
-	  
+	  if (!(i % 2000))
+	    std::cout << "reponse : " << answer << std::endl;
 	  outs = _net->getOutputs(); //guess
-	  _net->adjustWeights(outs, answerTab);
+	  _net->adjustWeights(answerTab);
+	  ++i;
 	}
       _imgLoader.deleteData();
     }

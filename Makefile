@@ -12,7 +12,7 @@ CC	=	clang++
 
 OBJ	=	$(SRC:.cpp=.o)
 
-CFLAGS =	-Wall -Wextra -ansi -ggdb
+CFLAGS =	-Wall -Wextra -O3
 
 LDFLAGS =	-lSDL -lm
 
