@@ -81,7 +81,7 @@ public:
 	      continue;
 	    _fileList.push_back(make_pair(path + "/" + directory->d_name,
 				  folder_tab[i].solution));
-	    // std::cout << path + "/" + directory->d_name << std::endl;
+	    std::cout << path + "/" + directory->d_name << std::endl;
 	  }
 	closedir(dir);
 	i++;
@@ -124,19 +124,21 @@ public:
       while (1)
       for (it = _fileList.begin() ; it != end ; it++)
 	{
+	  // std::cout << "size : " << _fileList.size() << std::endl;
 	  answer = (*it).second;
 	  answerTab = this->buildAnswerTab(answer);
 	  if (!(data = _imgLoader.getBmpData((*it).first)))
 	    continue;
-	  _net->loadInput(data, _x * _y * 4);
+	  // _net->loadInput(data, _x * _y * 4);
+	  _net->loadInput(data, _x * _y);
 	  data = NULL;
-	  if (!(i % 2000))
+	  // if (!(i % 2000))
 	    std::cout << "reponse : " << answer << std::endl;
 	  outs = _net->getOutputs(); //guess
 	  _net->adjustWeights(answerTab);
  	  g.update();
 	  ++i;
-	  usleep(100000);
+	  // usleep(500000);
 	}
       _imgLoader.deleteData();
     }

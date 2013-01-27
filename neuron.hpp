@@ -62,13 +62,17 @@ public:
   {
     _color.color = color;
   }
-  void					modifyColorFromSum(void)
+  void					modifyColorFromSum(double sum)
   {
     _color.color = 0x0;
-    if (_sum < 0)
-      _color.tab[1] = 0xFF * (_sum * -1);
+    if (sum < 0)
+      _color.color = (unsigned int)(0xFF * (sum * -1)) << 16;
     else
-      _color.tab[2] = 0xFF * (_sum);
+      _color.color = (unsigned int)(0xFF * (sum)) << 8;
+  }
+  void				printSum(void) const
+  {
+    std::cout << "Sum = " << _sum << std::endl;
   }
   unsigned			getColorFromConnection(t_connection *c)
   {
@@ -76,9 +80,9 @@ public:
 
     color.color = 0;
     if (c->connnectionWeight < 0)
-      color.tab[1] = 0xFF * (c->connnectionWeight * -1);
+      color.color = (unsigned int)(0xFF * (c->connnectionWeight * -1)) << 16;
     else
-      color.tab[2] = 0xFF * (c->connnectionWeight);
+      color.color = (unsigned int)(0xFF * (c->connnectionWeight)) << 8;
     return color.color;
   }
 
@@ -90,23 +94,15 @@ public:
     end = _OConnections.end();
     for (it = _OConnections.begin(); it != end; ++it)
       {
-	g.drawLine(_posX, _posY, (*it)->neuron.getPosX(), (*it)->neuron.getPosY(),
+	g.drawLine(_posX + NEURON_SIZE, _posY, (*it)->neuron.getPosX() - NEURON_SIZE, (*it)->neuron.getPosY(),
 		   this->getColorFromConnection(*it));
       }
+    g.update();
   }
 
   virtual void				draw(void)
   {
-    // g.PutPixel(_posX, _posY, _color.color);
-    // g.PutPixel(_posX-1, _posY, _color.color);
-    // g.PutPixel(_posX-2, _posY, _color.color);
-    // g.PutPixel(_posX+1, _posY, _color.color);
-    // g.PutPixel(_posX+2, _posY, _color.color);
-    // g.PutPixel(_posX, _posY+1, _color.color);
-    // g.PutPixel(_posX, _posY+2, _color.color);
-    // g.PutPixel(_posX, _posY-1, _color.color);
-    // g.PutPixel(_posX, _posY-2, _color.color);
-    modifyColorFromSum();
+    modifyColorFromSum(_sum);
     g.drawSquare(_posX, _posY, _color.color, NEURON_SIZE);
   }
   //=========
@@ -156,6 +152,7 @@ public:
 
   double		getSigmoidResult(double x)
   {
+    return threshold(x);
     return 1.f / (1.f + exp(-(x)));
   }
 
@@ -169,6 +166,7 @@ public:
     double	result = 1.f / (1.f + exp(-x));
     // if (result != 0 && x != 1)
     //   std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
+    return result;
     if (result > 0.5)
       return 1.f;
     return 0;
@@ -190,7 +188,9 @@ public:
   {
     double	out = this->threshold(_sum + _biais);
     _lastOut = this->getSigmoidResult(_sum + _biais);
+    // _lastOut = this->threshold(_sum + _biais);
     // std::cout << "OUT:   " << out << std::endl;
+    _sum = 0;
     return out;
   }
 

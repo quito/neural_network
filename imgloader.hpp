@@ -2,7 +2,10 @@
 #ifndef IMGLOADER_HPP_
 # define IMGLOADER_HPP_
 
-#include <exception>
+// # include <cstdio>
+
+
+# include <exception>
 # include <iostream>
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -69,6 +72,7 @@ public:
     // 	delete[] _data;
     // 	_data = NULL;
     //   }
+    std::cout << "path : " << path << std::endl;
     if ((fd = open(path.c_str(), O_RDONLY)) == -1)
       {
 	std::cerr << "Cannot open file " << path << std::endl;
@@ -118,6 +122,13 @@ public:
 	return NULL;
       }
     close(fd);
+
+    // int h=0;
+    // while (h < 600)
+    //   {
+    // 	printf("%hhX",_data[h]);
+    // 	h++;
+    //   }
     return _data;
   }
 

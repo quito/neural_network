@@ -7,13 +7,14 @@ SRC	=	main.cpp \
 		trainer.cpp \
 		imgtrainer.cpp \
 		imgloader.cpp \
-		graphic.cpp
+		graphic.cpp \
+		xortrainer.cpp
 
 CC	=	clang++
 
 OBJ	=	$(SRC:.cpp=.o)
 
-CFLAGS =	-Wall -Wextra -ggdb
+CFLAGS =	-w -Wall -Wextra -ggdb
 
 LDFLAGS =	-lSDL -lm
 

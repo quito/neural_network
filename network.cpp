@@ -118,7 +118,14 @@ void		Network::linkNeurons(void)
 
 void			Network::loadInput(unsigned char *data, unsigned int size)
 {
-  memcpy(_Inputs, data, size * sizeof(*data));
+  unsigned		i = 0;
+
+  while (i < size)
+    {
+      _Inputs[i] = data[i * 4] ? 1 : 0;
+      ++i;
+    }
+  // memcpy(_Inputs, data, size * sizeof(*data));
 }
 
 int			*Network::getOutputs(unsigned char *data, unsigned int size)
@@ -133,7 +140,9 @@ int			*Network::getOutputs(unsigned char *data, unsigned int size)
   // propagate through the first layer
   for (it = _INeurons.begin() ; it != end; it++)
     {
-      (*it)->addSignal((_Inputs[i] & 0xFFFFFF) ? 1 : 0);
+      // (*it)->addSignal((_Inputs[i] & 0xFFFFFF) ? 1 : 0);
+      (*it)->addSignal(_Inputs[i]);
+      // g.update();
       i++;
     }
   for (it = _INeurons.begin() ; it != end; it++)
@@ -154,13 +163,13 @@ int			*Network::getOutputs(unsigned char *data, unsigned int size)
   static unsigned z = 0;
   for (it = _ONeurons.begin() ; it != end; it++)
     {
-      _Outputs[i] = (*it)->getOutput();
-      if (!(z % 2000))
+      _Outputs[i] = (*it)->getOutput() < 0.5 ? 0 : 1;
+      // if (!(z % 2000))
 	std::cout << "Output[" << i << "] = " << _Outputs[i] << std::endl;
       i++;
     }
   ++z;
-  if (!(z % 2000))
+  // if (!(z % 2000))
     std::cout << "================================="<< std::endl;
   return _Outputs;
 }
@@ -221,7 +230,7 @@ void			Network::adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
       sigma = ((float)answers[i] - (*it)->neuron.getLastOut()) * (*it)->neuron.getLastOut() * (1.f - (*it)->neuron.getLastOut());
       (*it)->neuron.setLastSigma(sigma);
       delta = learning_ratio * sigma * neuron.getLastOut();
-      
+      (*it)->connnectionWeight += delta;
       // if (delta != 0.f)
 	// std::cout << "delta = " << delta<< std::endl;
       // std::cout << "last out : " << (*it)->neuron.getLastOut() << std::endl;
@@ -275,6 +284,7 @@ void			Network::adjustLayerConnectionWeight(double learning_ratio, Neuron &neuro
       sigma = this->getSigmaSum((*it)->neuron) * (*it)->neuron.getLastOut() * (1.f - (*it)->neuron.getLastOut());
       (*it)->neuron.setLastSigma(sigma);
       delta = learning_ratio * sigma * neuron.getLastOut();
+      (*it)->connnectionWeight += delta;
       // if (delta != 0.f)
 	// std::cout << "delta = " << delta<< std::endl;
       // std::cout << "last out : " << (*it)->neuron.getLastOut() << std::endl;
