@@ -13,10 +13,10 @@ typedef struct
 
 static const t_xor_training_data	data_tab[] =
   {
-    {0, 0, 0},
-    {1, 0, 1},
     {0, 1, 1},
-    {1, 1, 0},
+    {1, 0, 1},
+    {0, 0, 0},
+    {1, 1, 0}
   };
 
 class XorTrainer
@@ -32,7 +32,7 @@ public:
   {
     std::vector<int>    hlayer(1);
 
-    hlayer[0] = 2;
+    hlayer[0] = 3;
     _net = new Network(2, 1, hlayer);
   }
 

@@ -40,7 +40,7 @@ public:
   Neuron() :
     _outputSignal(1.0f),
     _sum(0),
-    _biais(1.f),
+    _biais(1.0),
     _lastOut(0),
     _lastSigma(0)
 
@@ -163,13 +163,16 @@ public:
     // double	k = 1.f;
     // double	result = 1.f / (1.f + (double)expf(-k + x));
     // double	result = 1.f / (1.f);
+    // if (x > 0)
+    //   return 1;
+    // return -1;
     double	result = 1.f / (1.f + exp(-x));
     // if (result != 0 && x != 1)
     //   std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
     return result;
     if (result > 0.5)
       return 1.f;
-    return 0;
+    return -1.f;
     // if (result > thresholdValue)
     //   return 1;
     // return 0;
