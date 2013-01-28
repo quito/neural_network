@@ -2,6 +2,8 @@
 #include "network.hpp"
 
 
+#define ALPHA	0.00
+
 Network::Network(unsigned int NbIn, unsigned int NbOut, std::vector<int> &NBHidden) :
     _INeurons(NbIn),
     _HNeurons(NBHidden.size()),
@@ -12,7 +14,8 @@ Network::Network(unsigned int NbIn, unsigned int NbOut, std::vector<int> &NBHidd
     std::vector<int>::iterator	it;
     int				i = 0;
 
-    _Inputs = new unsigned int[NbIn];
+    _Inputs = new int[NbIn];
+    _InputsWeights = new double[NbIn];
     _Outputs = new int[NbOut];
     for (it = NBHidden.begin(); it != NBHidden.end(); it++)
       {
@@ -116,19 +119,23 @@ void		Network::linkNeurons(void)
       }
   }
 
-void			Network::loadInput(unsigned char *data, unsigned int size)
+void			Network::loadInput(int *data, unsigned int size)
 {
   unsigned		i = 0;
 
   while (i < size)
     {
-      _Inputs[i] = data[i * 4] ? 1 : 0;
+      // _Inputs[i] = data[i * 4] ? 1 : 0;
+      _Inputs[i] = data[i] & 0xFF0000 ? 1 : -1;
+      // _InputsWeights[i] = (double)(rand() % 100) / 100.f;
+      _InputsWeights[i] = (double)(rand() % 100) / 50.f - 1.0;
+      // std::cout << "data = "<< data[i] << std::endl;
       ++i;
     }
   // memcpy(_Inputs, data, size * sizeof(*data));
 }
 
-int			*Network::getOutputs(unsigned char *data, unsigned int size)
+int			*Network::getOutputs(int *data, unsigned int size)
 {
   std::vector<Neuron*>::iterator	it;
   std::vector<Neuron*>::iterator	end;
@@ -141,7 +148,7 @@ int			*Network::getOutputs(unsigned char *data, unsigned int size)
   for (it = _INeurons.begin() ; it != end; it++)
     {
       // (*it)->addSignal((_Inputs[i] & 0xFFFFFF) ? 1 : 0);
-      (*it)->addSignal(_Inputs[i]);
+      (*it)->addSignal((_Inputs[i] > 0.0 ? 1 : -1) * _InputsWeights[i]);
       // g.update();
       i++;
     }
@@ -163,14 +170,13 @@ int			*Network::getOutputs(unsigned char *data, unsigned int size)
   static unsigned z = 0;
   for (it = _ONeurons.begin() ; it != end; it++)
     {
-      _Outputs[i] = (*it)->getOutput() < 0.5 ? 0 : 1;
+      _Outputs[i] = (*it)->getOutput() < 0.0 ? -1 : 1;
       // if (!(z % 2000))
 	std::cout << "Output[" << i << "] = " << _Outputs[i] << std::endl;
       i++;
     }
   ++z;
   // if (!(z % 2000))
-    std::cout << "================================="<< std::endl;
   return _Outputs;
 }
 
@@ -229,7 +235,7 @@ void			Network::adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
     {
       sigma = ((float)answers[i] - (*it)->neuron.getLastOut()) * (*it)->neuron.getLastOut() * (1.f - (*it)->neuron.getLastOut());
       (*it)->neuron.setLastSigma(sigma);
-      delta = learning_ratio * sigma * neuron.getLastOut();
+      delta = learning_ratio * sigma * neuron.getLastOut() + ALPHA * (*it)->connnectionWeight;
       (*it)->connnectionWeight += delta;
       // if (delta != 0.f)
 	// std::cout << "delta = " << delta<< std::endl;
@@ -283,7 +289,8 @@ void			Network::adjustLayerConnectionWeight(double learning_ratio, Neuron &neuro
     {
       sigma = this->getSigmaSum((*it)->neuron) * (*it)->neuron.getLastOut() * (1.f - (*it)->neuron.getLastOut());
       (*it)->neuron.setLastSigma(sigma);
-      delta = learning_ratio * sigma * neuron.getLastOut();
+      delta = learning_ratio * sigma * neuron.getLastOut() + ALPHA * (*it)->connnectionWeight;
+      // std::cout << "delta = " << delta << std::endl;
       (*it)->connnectionWeight += delta;
       // if (delta != 0.f)
 	// std::cout << "delta = " << delta<< std::endl;
@@ -308,6 +315,28 @@ void			Network::adjustLayerWeights(double learning_ratio,
     }  
 }
 
+void			Network::adjustInputWeights(double learning_ratio,
+						    std::vector<Neuron*> &Input)
+{
+  double					delta;
+  double					sigma;
+  int					i = 0;
+
+  for (; i < Input.size(); ++i)
+    {
+      sigma = this->getSigmaSum(*(Input[i])) * Input[i]->getLastOut() * (1.f - Input[i]->getLastOut());
+      Input[i]->setLastSigma(sigma);
+      delta = learning_ratio * sigma * _Inputs[i] + ALPHA * _InputsWeights[i];
+      // std::cout << "delta = " << delta << std::endl;
+      _InputsWeights[i] += delta;
+      // if (delta != 0.f)
+	// std::cout << "delta = " << delta<< std::endl;
+      // std::cout << "last out : " << (*it)->neuron.getLastOut() << std::endl;
+      ++i;
+    }
+  // Input->drawConnections();
+}
+
 //FIXME
 void			Network::adjustWeights(int *answer)
 {
@@ -325,4 +354,5 @@ void			Network::adjustWeights(int *answer)
 	this->adjustLayerWeights(1.f, *rit);
     }
   this->adjustLayerWeights(1.f, _INeurons);
+  this->adjustInputWeights(1.f, _INeurons);
 }

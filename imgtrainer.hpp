@@ -100,7 +100,7 @@ public:
     int			*answerTab = new int[size];
     
     for (i = 0; i < size; ++i)
-	answerTab[i] = 0;
+	answerTab[i] = -1;
     if (answer < (signed int)size)
       answerTab[answer] = 1;
     return answerTab;
@@ -110,7 +110,7 @@ public:
     {
       std::vector<std::pair<std::string, int> >::iterator	it;
       std::vector<std::pair<std::string, int> >::iterator	end;
-      unsigned char	*data;
+      int		*data;
       int		answer;
       int		*answerTab;
       int		*outs;
@@ -127,7 +127,7 @@ public:
 	  // std::cout << "size : " << _fileList.size() << std::endl;
 	  answer = (*it).second;
 	  answerTab = this->buildAnswerTab(answer);
-	  if (!(data = _imgLoader.getBmpData((*it).first)))
+	  if (!(data = (int*)_imgLoader.getBmpData((*it).first)))
 	    continue;
 	  // _net->loadInput(data, _x * _y * 4);
 	  _net->loadInput(data, _x * _y);

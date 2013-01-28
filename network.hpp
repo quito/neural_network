@@ -12,11 +12,12 @@ class	Network
 {
 private:
 
-  unsigned int		*_Inputs;
+  int			*_Inputs;
+  double		*_InputsWeights;
   std::vector<Neuron*>	_INeurons;
   std::vector<std::vector<Neuron*> >	_HNeurons;
   std::vector<Neuron*>	_ONeurons;
-  int		*_Outputs;
+  int			*_Outputs;
 
 public:
 
@@ -25,8 +26,8 @@ public:
   inline unsigned	getOutLayerSize(void) const {return _ONeurons.size();}
   void			allocateNeurons(void);
   void			linkNeurons(void);
-  void			loadInput(unsigned char *data, unsigned int size);
-  int			*getOutputs(unsigned char *data = NULL, unsigned int size = 0);
+  void			loadInput(int *data, unsigned int size);
+  int			*getOutputs(int *data = NULL, unsigned int size = 0);
   int			guess();
 
   double		getSigmaSum(Neuron &neuron);
@@ -37,6 +38,9 @@ public:
   inline double		getOutSigma(int output, int answer);
   void			adjustOutConnectionWeight(double learning_ratio, Neuron &neuron,
 						  int *answers);
+  void			adjustInputWeights(double learning_ratio,
+					   std::vector<Neuron*> &Input);
+  
   void			adjustWeight(int *output, int *answer);
   void			adjustOutLayerWeights(double learning_ratio, std::vector<Neuron *> &layer,
 					      int *answer);

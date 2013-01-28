@@ -40,10 +40,9 @@ public:
   Neuron() :
     _outputSignal(1.0f),
     _sum(0),
-    _biais(1.0),
+    _biais(1),
     _lastOut(0),
     _lastSigma(0)
-
   {
     _posX = 50;
     _posY = 50;
@@ -97,7 +96,7 @@ public:
 	g.drawLine(_posX + NEURON_SIZE, _posY, (*it)->neuron.getPosX() - NEURON_SIZE, (*it)->neuron.getPosY(),
 		   this->getColorFromConnection(*it));
       }
-    g.update();
+    // g.update();
   }
 
   virtual void				draw(void)
@@ -133,7 +132,10 @@ public:
     // double		t[] = {-1, 1};
 
     // c = new t_connection(neuron, t[rand() % (sizeof(t) / sizeof(*t))]);
-    c = new t_connection(neuron, (double)(rand() % 100) / 100.f - 0.5);
+    c = new t_connection(neuron, (double)(rand() % 100) / 50.f - 1.0);
+    // c = new t_connection(neuron, (double)(rand() % 100) / 100.f);
+    // std::cout << "Weight : " << (double)(rand() % 100) / 50.f - 1.0<< std::endl;
+    // while (1);
     // std::cout << "connection weight : " << c->connnectionWeight<< std::endl;
     _OConnections.push_back(c);
   }
@@ -166,7 +168,7 @@ public:
     // if (x > 0)
     //   return 1;
     // return -1;
-    double	result = 1.f / (1.f + exp(-x));
+    double	result = 1.f / (1.f + exp(-x)) - 0.5;
     // if (result != 0 && x != 1)
     //   std::cout << "result = " << result << "car exp " << -x << " = " << exp(-x) << std::endl; 
     return result;
@@ -190,7 +192,8 @@ public:
   double		getOutput(void)
   {
     double	out = this->threshold(_sum + _biais);
-    _lastOut = this->getSigmoidResult(_sum + _biais);
+    _lastOut = out;
+    // std::cout << "_sum = " << _sum << "_biais = " << _biais << " output = " << out<< std::endl;
     // _lastOut = this->threshold(_sum + _biais);
     // std::cout << "OUT:   " << out << std::endl;
     _sum = 0;
@@ -213,7 +216,7 @@ public:
     end = _OConnections.end();
     for (it = _OConnections.begin(); it != end; it++)
       if (*it)
-	(*it)->neuron.addSignal(this->threshold(_sum + _biais) * (*it)->connnectionWeight);
+	(*it)->neuron.addSignal((this->threshold(_sum + _biais) < 0 ? -1 : 1) * (*it)->connnectionWeight);
 	// (*it)->neuron.addSignal(_outputSignal * (*it)->connnectionWeight);
     _sum = 0;
   }

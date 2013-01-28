@@ -4,10 +4,10 @@
 
 # include <SDL/SDL.h>
 
-// # define NEURON_SIZE 4
-# define NEURON_SIZE 30
-// # define SPACE_BETWEEN_NEURON 1.15
-# define SPACE_BETWEEN_NEURON 10
+# define NEURON_SIZE 4
+// # define NEURON_SIZE 30
+# define SPACE_BETWEEN_NEURON 1.15
+// # define SPACE_BETWEEN_NEURON 10
 # define NEURON_X_START_POS 30
 # define NEURON_Y_START_POS 10
 
